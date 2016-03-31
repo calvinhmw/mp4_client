@@ -40,5 +40,4 @@ mp4Controllers.controller('SettingsController', ['$scope' , '$window' , function
     $scope.displayText = "URL set";
 
   };
-
 }]);
