@@ -31,6 +31,8 @@ mp4Controllers.controller('LlamaListController', ['$scope', '$http', 'Llamas', '
 
 }]);
 
+// begin writing customized controllers here
+
 mp4Controllers.controller('SettingsController', ['$scope', '$window', function ($scope, $window) {
     $scope.url = $window.sessionStorage.baseurl;
     $scope.setUrl = function () {
@@ -40,3 +42,8 @@ mp4Controllers.controller('SettingsController', ['$scope', '$window', function (
         $scope.displayText = "URL set";
     };
 }]);
+
+
+
+
+

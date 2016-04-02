@@ -16,7 +16,7 @@ app.config(['$routeProvider', function ($routeProvider) {
     }).when('/users', {
         templateUrl: 'partials/users.html',
         controller: 'UsersController'
-    }).when('tasks', {
+    }).when('/tasks', {
         templateUrl: 'partials/tasks.html',
         controller: 'TasksController'
     }).otherwise({
