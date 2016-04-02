@@ -1,12 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div>
+    <h2>Users</h2>
+    <span>a list of users</span>
+</div>
 
-
-
-</body>
-</html>
+<div ng-controller='UserListController'>
+    <div class="row" ng-repeat="user in users">
+        <h4 class="columns small-3">{{user.name}}</h4>
+        <h4 class="columns small-3">{{user.email}}</h4>
+        <div class="columns small-4">
+            <button type="button" class="alert button">Delete</button>
+        </div>
+    </div>
+    <div>
+        <h3>{{error}}</h3>
+    </div>
+</div>

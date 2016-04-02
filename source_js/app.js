@@ -15,7 +15,7 @@ app.config(['$routeProvider', function ($routeProvider) {
         controller: 'SettingsController'
     }).when('/users', {
         templateUrl: 'partials/users.html',
-        controller: 'UsersController'
+        controller: 'UserListController'
     }).when('/tasks', {
         templateUrl: 'partials/tasks.html',
         controller: 'TasksController'

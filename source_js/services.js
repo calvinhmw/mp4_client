@@ -26,17 +26,27 @@ mp4Services.factory('Llamas', function ($http, $window) {
 // begin writing customized services here
 
 mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
+    //return {
+    //    get: function (callback) {
+    //        var baseUrl = $window.sessionStorage.baseurl;
+    //        $http.get(baseUrl + '/api/users').then(
+    //            function (response) {
+    //                callback(response);
+    //            },
+    //            function (error) {
+    //                console.log(error.statusText);
+    //                //callback(error);
+    //            }
+    //        );
+    //    }
+    //}
+
     return {
-        get: function (callback) {
+        get: function () {
             var baseUrl = $window.sessionStorage.baseurl;
-            $http.get(baseUrl + '/api/tasks').then(
-                function (response) {
-                    callback(response);
-                },
-                function (error) {
-                    callback(error);
-                }
-            );
+            return $http.get(baseUrl + '/api/users');
         }
     }
+
+
 }]);
