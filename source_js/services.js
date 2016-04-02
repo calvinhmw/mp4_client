@@ -16,7 +16,7 @@ mp4Services.factory('Llamas', function($http, $window) {
     return {
         get : function() {
             var baseUrl = $window.sessionStorage.baseurl;
-            console.log(baseUrl);
+            console.log($window.sessionStorage.baseurl);
             return $http.get(baseUrl+'/api/users');
         }
     }

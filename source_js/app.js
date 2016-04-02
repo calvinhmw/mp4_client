@@ -7,6 +7,9 @@ app.config(['$routeProvider', function ($routeProvider) {
     }).when('/secondview', {
         templateUrl: 'partials/secondview.html',
         controller: 'SecondController'
+    }).when('/llamalist', {
+        templateUrl: 'partials/llamalist.html',
+        controller: 'LlamaListController'
     }).when('/settings', {
         templateUrl: 'partials/settings.html',
         controller: 'SettingsController'
@@ -16,9 +19,6 @@ app.config(['$routeProvider', function ($routeProvider) {
     }).when('tasks', {
         templateUrl: 'partials/tasks.html',
         controller: 'TasksController'
-    }).when('/llamalist', {
-        templateUrl: 'partials/llamalist.html',
-        controller: 'LlamaListController'
     }).otherwise({
         redirectTo: '/settings'
     });
