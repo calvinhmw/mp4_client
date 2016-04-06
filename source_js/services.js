@@ -27,26 +27,35 @@ mp4Services.factory('Llamas', function ($http, $window) {
 
 mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
     //return {
-    //    get: function (callback) {
+    //    get: function (successCallback, errorCallback) {
     //        var baseUrl = $window.sessionStorage.baseurl;
     //        $http.get(baseUrl + '/api/users').then(
     //            function (response) {
-    //                callback(response);
+    //                successCallback(response.data);
     //            },
     //            function (error) {
-    //                console.log(error.statusText);
-    //                //callback(error);
+    //                errorCallback(error.status, error.statusText);
     //            }
     //        );
     //    }
-    //}
+    //};
 
     return {
         get: function () {
             var baseUrl = $window.sessionStorage.baseurl;
             return $http.get(baseUrl + '/api/users');
+        },
+        add: function(name, email) {
+            var baseUrl = $window.sessionStorage.baseurl;
+            var data = {
+                name: name,
+                email: email
+            };
+            return $http.post(baseUrl+'/api/users', data);
         }
     }
 
-
 }]);
+
+
+

@@ -1,1 +1,15 @@
 // Add any custom Sass & CSS here
+.required-field {
+  color: red;
+}
+
+.row.full-width {
+  width: 100%;
+  max-width: 100%;
+}
+
+
+.row.medium-width {
+  width: 60%;
+  max-width: 60%;
+}

@@ -43,19 +43,37 @@ mp4Controllers.controller('SettingsController', ['$scope', '$window', function (
     };
 }]);
 
-mp4Controllers.controller('UserListController', ['$scope', '$window', 'Users', function ($scope, $window, Users) {
+mp4Controllers.controller('UserListController', ['$scope', 'Users', function ($scope, Users) {
     Users.get().then(function (response) {
         $scope.users = response.data.data;
         console.log(response);
     }, function (response) {
-        console.log('failed');
-        $scope.error = response.data || "GET Request failed";
+        //console.log('failed');
+        $scope.errorCode = response.status;
+        $scope.errorText = response.statusText;
     });
 
-    //Users.get().success(function(data) {
+    //Users.get(function(data){
     //    $scope.users = data.data;
+    //},function(status, statusText){
+    //    $scope.errorCode = status;
+    //    $scope.errorText = statusText;
     //});
 
+}]);
+
+mp4Controllers.controller('AddUserController', ['$scope', 'Users', function ($scope, Users) {
+    $scope.addUser = function () {
+        var name = $scope.name;
+        var email = $scope.email;
+        Users.add(name, email).then(function (response) {
+            $scope.response = response;
+            $scope.successMsg = response.data.message;
+        }, function (response) {
+            $scope.response = response;
+            $scope.errorMsg = response.data.message;
+        });
+    };
 }]);
 
 
