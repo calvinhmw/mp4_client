@@ -46,6 +46,7 @@ mp4Controllers.controller('SettingsController', ['$scope', '$window', function (
 mp4Controllers.controller('UserListController', ['$scope', '$window', 'Users', function ($scope, $window, Users) {
     Users.get().then(function (response) {
         $scope.users = response.data.data;
+        console.log(response);
     }, function (response) {
         console.log('failed');
         $scope.error = response.data || "GET Request failed";

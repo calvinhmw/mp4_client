@@ -3,7 +3,8 @@
     <span>a list of users</span>
 </div>
 
-<div ng-controller='UserListController'>
+<div>
+    <a href="#/adduser" class="button">Add</a>
     <div class="row" ng-repeat="user in users">
         <h4 class="columns small-3">{{user.name}}</h4>
         <h4 class="columns small-3">{{user.email}}</h4>
@@ -11,7 +12,7 @@
             <button type="button" class="alert button">Delete</button>
         </div>
     </div>
-    <div>
-        <h3>{{error}}</h3>
+    <div class="error">
+        <h3 class="error">{{error}}</h3>
     </div>
 </div>
