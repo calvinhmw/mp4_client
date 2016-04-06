@@ -1,17 +1,35 @@
-<form data-abide>
-    <div class="name-field">
-        <label>Your name <small>required</small>
-            <input type="text" required pattern="[a-zA-Z]+" ng-model="name">
-        </label>
-        <small class="error">Name is required and must be a string.</small>
+<form name="adduser" novalidate>
+    <div class="row full-width">
+        <div class="columns small-4">
+            <label>Name <span class="required-field">*</span>
+                <input type="text" name="name" ng-model="name" required>
+                <span ng-show="adduser.name.$touched && adduser.name.$invalid">
+                    <span ng-show="adduser.name.$error.required">A name is required.</span>
+                </span>
+            </label>
+        </div>
     </div>
-    <div class="email-field">
-        <label>Email <small>required</small>
-            <input type="email" required ng-model="email">
-        </label>
-        <small class="error">An email address is required.</small>
+
+    <div class="row full-width">
+        <div class="columns small-4">
+            <label>Email <span class="required-field">*</span>
+                <input type="email" name="email" ng-model="email" required>
+                <span ng-show="adduser.email.$touched && adduser.email.$invalid">
+                    <span ng-show="adduser.email.$error.required">An email is required</span>
+                    <span ng-show="adduser.email.$error.email">Email is not valid</span>
+                </span>
+            </label>
+        </div>
     </div>
-    <button type="submit" ng-click="addUser()">Submit</button>
+
+    <div class="row full-width">
+        <div class="columns small-1">
+            <button class="button" type="submit" value="Submit" ng-click="addUser()"
+                    ng-disabled="adduser.name.$invalid || adduser.email.$invalid">Submit
+            </button>
+        </div>
+    </div>
+
 </form>
 
 

@@ -63,7 +63,14 @@ mp4Controllers.controller('UserListController', ['$scope', 'Users', function ($s
 }]);
 
 mp4Controllers.controller('AddUserController', ['$scope', 'Users', function ($scope, Users) {
+    $scope.successMsg = "";
+    $scope.response = "";
+    $scope.errorMsg = "";
+
     $scope.addUser = function () {
+        $scope.successMsg = "";
+        $scope.response = "";
+        $scope.errorMsg = "";
         var name = $scope.name;
         var email = $scope.email;
         Users.add(name, email).then(function (response) {
