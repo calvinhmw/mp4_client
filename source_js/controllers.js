@@ -67,20 +67,32 @@ mp4Controllers.controller('AddUserController', ['$scope', 'Users', function ($sc
     $scope.response = "";
     $scope.errorMsg = "";
 
-    $scope.addUser = function () {
-        $scope.successMsg = "";
-        $scope.response = "";
-        $scope.errorMsg = "";
-        var name = $scope.name;
-        var email = $scope.email;
-        Users.add(name, email).then(function (response) {
-            $scope.response = response;
-            $scope.successMsg = response.data.message;
-        }, function (response) {
-            $scope.response = response;
-            $scope.errorMsg = response.data.message;
-        });
+    $scope.addUser = function (form) {
+        if (form.$valid) {
+            $scope.successMsg = "";
+            $scope.response = "";
+            $scope.errorMsg = "";
+            var name = $scope.name;
+            var email = $scope.email;
+            Users.add(name, email).then(function (response) {
+                $scope.response = response;
+                $scope.successMsg = response.data.message;
+            }, function (response) {
+                $scope.response = response;
+                $scope.errorMsg = response.data.message;
+            });
+            $scope.resetForm(form);
+        }
     };
+
+    $scope.resetForm = function (form) {
+        if (form) {
+            form.$setPristine();
+            form.$setUntouched();
+            $scope.email = "";
+            $scope.name = "";
+        }
+    }
 }]);
 
 

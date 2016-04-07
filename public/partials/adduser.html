@@ -1,11 +1,11 @@
-<form name="adduser" novalidate>
+<form name="adduser" ng-submit="addUser(adduser)" novalidate>
     <div class="row full-width">
         <div class="columns small-4">
             <label>Name <span class="required-field">*</span>
                 <input type="text" name="name" ng-model="name" required>
-                <span ng-show="adduser.name.$touched && adduser.name.$invalid">
-                    <span ng-show="adduser.name.$error.required">A name is required.</span>
-                </span>
+                <div ng-show="adduser.$submitted || adduser.name.$touched">
+                    <span ng-show="adduser.name.$error.required">A name is required!</span>
+                </div>
             </label>
         </div>
     </div>
@@ -14,23 +14,24 @@
         <div class="columns small-4">
             <label>Email <span class="required-field">*</span>
                 <input type="email" name="email" ng-model="email" required>
-                <span ng-show="adduser.email.$touched && adduser.email.$invalid">
-                    <span ng-show="adduser.email.$error.required">An email is required</span>
-                    <span ng-show="adduser.email.$error.email">Email is not valid</span>
-                </span>
+                <div ng-show="adduser.$submitted || adduser.email.$touched">
+                    <span ng-show="adduser.email.$error.required">An email is required!</span>
+                    <span ng-show="adduser.email.$error.email">Enter a valid email!</span>
+                </div>
             </label>
         </div>
     </div>
 
     <div class="row full-width">
         <div class="columns small-1">
-            <button class="button" type="submit" value="Submit" ng-click="addUser()"
-                    ng-disabled="adduser.name.$invalid || adduser.email.$invalid">Submit
+            <button class="button" type="submit" value="Submit">
+                Submit
             </button>
         </div>
     </div>
 
 </form>
+
 
 
 <h1>{{successMsg}}</h1>
