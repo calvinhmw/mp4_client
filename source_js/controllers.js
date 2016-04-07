@@ -52,14 +52,6 @@ mp4Controllers.controller('UserListController', ['$scope', 'Users', function ($s
         $scope.errorCode = response.status;
         $scope.errorText = response.statusText;
     });
-
-    //Users.get(function(data){
-    //    $scope.users = data.data;
-    //},function(status, statusText){
-    //    $scope.errorCode = status;
-    //    $scope.errorText = statusText;
-    //});
-
 }]);
 
 mp4Controllers.controller('AddUserController', ['$scope', 'Users', function ($scope, Users) {
@@ -76,7 +68,7 @@ mp4Controllers.controller('AddUserController', ['$scope', 'Users', function ($sc
             var email = $scope.email;
             Users.add(name, email).then(function (response) {
                 $scope.response = response;
-                $scope.successMsg = response.data.message;
+                $scope.successMsg = "User "+ name +" added!";
             }, function (response) {
                 $scope.response = response;
                 $scope.errorMsg = response.data.message;

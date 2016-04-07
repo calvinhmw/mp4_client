@@ -52,6 +52,9 @@ mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
                 email: email
             };
             return $http.post(baseUrl+'/api/users', data);
+        },
+        delete: function(){
+
         }
     }
 
