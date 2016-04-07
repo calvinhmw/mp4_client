@@ -88,6 +88,17 @@ mp4Controllers.controller('AddUserController', ['$scope', 'Users', function ($sc
 }]);
 
 
+mp4Controllers.controller('TaskListController', ['$scope', 'Tasks', function ($scope, Tasks) {
+    Tasks.get().then(function (response) {
+        $scope.tasks = response.data.data;
+    }, function (response) {
+        $scope.response = response;
+        $scope.errorCode = response.status;
+        $scope.errorText = response.statusText;
+    });
+}]);
+
+
 
 
 

@@ -62,3 +62,15 @@ mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
 
 
 
+
+mp4Services.factory('Tasks', ['$http', '$window', function ($http, $window) {
+    return {
+        get: function(){
+            var baseUrl = $window.sessionStorage.baseurl;
+            return $http.get(baseUrl + '/api/tasks');
+        }
+    };
+}]);
+
+
+

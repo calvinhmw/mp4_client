@@ -21,7 +21,7 @@ app.config(['$routeProvider', function ($routeProvider) {
         controller: 'AddUserController'
     }).when('/tasks', {
         templateUrl: 'partials/tasks.html',
-        controller: 'TasksController'
+        controller: 'TaskListController'
     }).otherwise({
         redirectTo: '/settings'
     });

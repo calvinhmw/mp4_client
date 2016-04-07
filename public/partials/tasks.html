@@ -1,1 +1,30 @@
 
+<div>
+    <h2>Tasks</h2>
+    <span>a list of tasks</span>
+</div>
+
+<div>
+
+    <a href="#/addtask" class="button">Add task</a>
+    <div class="row">
+        <a class="button">Previous</a>
+        <a class="button">Next</a>
+    </div>
+    <div class="row" ng-repeat="task in tasks">
+        <h4 class="columns small-5">{{task.name}}</h4>
+        <div class="columns small-5">
+            <h4>Deadline: {{task.deadline | date:'yyyy/MM/dd HH:mm'}} <br>
+                Assigned to: {{task.assignedUserName}}</h4>
+        </div>
+
+        <div class="columns small-1">
+            <button type="button" class="alert button">Delete</button>
+        </div>
+    </div>
+    <div class="error">
+        <h3 class="error">{{errorCode}} : {{errorText}}</h3>
+    </div>
+</div>
+
+
