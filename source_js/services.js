@@ -58,6 +58,12 @@ mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
         },
         delete: function (id) {
 
+        },
+        getDetail: function(id){
+
+        },
+        update: function(id){
+
         }
     }
 

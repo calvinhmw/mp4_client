@@ -55,6 +55,13 @@ mp4Controllers.controller('UserListController', ['$scope', 'Users', function ($s
     });
 }]);
 
+
+mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Users', function ($scope, $routeParams, Users) {
+    $scope.userId = $routeParams.id;
+
+}]);
+
+
 mp4Controllers.controller('AddUserController', ['$scope', 'Users', function ($scope, Users) {
     $scope.successMsg = "";
     $scope.response = "";
@@ -195,7 +202,7 @@ mp4Controllers.controller('AddTaskController', ['$scope', 'Tasks', 'Users', func
             };
             Tasks.add(data).then(function (response) {
                 $scope.response = response;
-                $scope.successMsg = "Task "+data.name+" added";
+                $scope.successMsg = "Task " + data.name + " added";
             }, function (response) {
                 $scope.response = response;
                 $scope.errorMsg = response.data.message;

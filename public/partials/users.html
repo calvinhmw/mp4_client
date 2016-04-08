@@ -6,7 +6,7 @@
 <div>
     <a href="#/adduser" class="button">Add</a>
     <div class="row" ng-repeat="user in users">
-        <h4 class="columns small-3">{{user.name}}</h4>
+        <h4 class="columns small-3"><a href="#/users/{{user._id}}">{{user.name}}</a></h4>
         <h4 class="columns small-3">{{user.email}}</h4>
         <div class="columns small-4">
             <button type="button" class="alert button">Delete</button>

@@ -16,6 +16,9 @@ app.config(['$routeProvider', function ($routeProvider) {
     }).when('/users', {
         templateUrl: 'partials/users.html',
         controller: 'UserListController'
+    }).when('/users/:id', {
+        templateUrl: 'partials/userdetail.html',
+        controller: 'UserDetailController'
     }).when('/adduser', {
         templateUrl: 'partials/adduser.html',
         controller: 'AddUserController'
