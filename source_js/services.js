@@ -39,21 +39,19 @@ mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
     //        );
     //    }
     //};
-
+    var baseUrl = $window.sessionStorage.baseurl;
     return {
         get: function () {
-            var baseUrl = $window.sessionStorage.baseurl;
             return $http.get(baseUrl + '/api/users');
         },
-        add: function(name, email) {
-            var baseUrl = $window.sessionStorage.baseurl;
+        add: function (name, email) {
             var data = {
                 name: name,
                 email: email
             };
-            return $http.post(baseUrl+'/api/users', data);
+            return $http.post(baseUrl + '/api/users', data);
         },
-        delete: function(){
+        delete: function (id) {
 
         }
     }
@@ -61,13 +59,19 @@ mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
 }]);
 
 
-
-
 mp4Services.factory('Tasks', ['$http', '$window', function ($http, $window) {
+    var baseUrl = $window.sessionStorage.baseurl;
     return {
-        get: function(){
-            var baseUrl = $window.sessionStorage.baseurl;
-            return $http.get(baseUrl + '/api/tasks');
+        //getCount: function(){
+        //    return $http.get(baseUrl+'/api/tasks', {params: {count:true}});
+        //},
+        get: function (queryParams) {
+            var config = {
+                method: 'GET',
+                url: baseUrl+'/api/tasks',
+                params: queryParams
+            };
+            return $http(config);
         }
     };
 }]);

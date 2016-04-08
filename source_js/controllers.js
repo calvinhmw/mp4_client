@@ -68,7 +68,7 @@ mp4Controllers.controller('AddUserController', ['$scope', 'Users', function ($sc
             var email = $scope.email;
             Users.add(name, email).then(function (response) {
                 $scope.response = response;
-                $scope.successMsg = "User "+ name +" added!";
+                $scope.successMsg = "User " + name + " added!";
             }, function (response) {
                 $scope.response = response;
                 $scope.errorMsg = response.data.message;
@@ -89,13 +89,84 @@ mp4Controllers.controller('AddUserController', ['$scope', 'Users', function ($sc
 
 
 mp4Controllers.controller('TaskListController', ['$scope', 'Tasks', function ($scope, Tasks) {
-    Tasks.get().then(function (response) {
-        $scope.tasks = response.data.data;
-    }, function (response) {
-        $scope.response = response;
-        $scope.errorCode = response.status;
-        $scope.errorText = response.statusText;
-    });
+    $scope.count = 0;
+    $scope.page = 0;
+    $scope.times = 0;
+
+    $scope.sortBy = "dateCreated";
+    $scope.sortOptions = ["dateCreated", "name", "assignedUserName", "deadline"];
+    $scope.ascendingOrder = false;
+
+    $scope.queryParams = {
+        where: {
+            completed: false
+        },
+        sort: {
+            dateCreated: -1
+        },
+        skip: 0,
+        limit: 10
+    };
+
+    $scope.getTasks = function () {
+
+        $scope.times++;
+
+        var paramsWithCount = Object.assign({count: true}, $scope.queryParams);
+        var paramsWithoutCount = Object.assign({count: false}, $scope.queryParams);
+
+        Tasks.get(paramsWithCount).then(function (response) {
+            $scope.count = parseInt(response.data.data);
+            $scope.response = response;
+
+            return Tasks.get(paramsWithoutCount);
+        }).then(function (response) {
+            $scope.tasks = response.data.data;
+            //$scope.response = response;
+        }, function (response) {
+            $scope.response = response;
+            $scope.errorCode = response.status;
+            $scope.errorText = response.statusText;
+        });
+    };
+
+    $scope.nextPage = function () {
+        if (($scope.page + 1) * $scope.queryParams.limit >= $scope.count) {
+            $scope.page = 0;
+        } else {
+            $scope.page++;
+        }
+        $scope.queryParams.skip = $scope.page * $scope.queryParams.limit;
+    };
+
+    $scope.previousPage = function () {
+        if ($scope.page == 0) {
+            var total = Math.floor($scope.count / $scope.queryParams.limit);
+            $scope.page = ($scope.count % $scope.queryParams.limit == 0) ? total - 1 : total;
+        } else {
+            $scope.page--;
+        }
+        $scope.queryParams.skip = $scope.page * $scope.queryParams.limit;
+    };
+
+    $scope.completenessChanged = function () {
+        $scope.queryParams.skip = 0;
+        $scope.page = 0;
+    };
+
+    $scope.reorder = function () {
+        $scope.queryParams.sort[$scope.sortBy] = $scope.ascendingOrder ? 1 : -1;
+    };
+
+    $scope.changeSortBy = function () {
+        for (var prop in $scope.queryParams.sort) {
+            $scope.queryParams.sort[prop]=undefined;
+        }
+        $scope.queryParams.sort[$scope.sortBy] = $scope.ascendingOrder ? 1 : -1;
+    };
+
+    $scope.$watch('queryParams', $scope.getTasks, true);
+
 }]);
 
 

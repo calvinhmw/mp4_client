@@ -1,4 +1,3 @@
-
 <div>
     <h2>Tasks</h2>
     <span>a list of tasks</span>
@@ -6,16 +5,63 @@
 
 <div>
 
+    <!--<h1>total page: {{count}}</h1>-->
+    <!--<h1>current page: {{page}}</h1>-->
+    <!--<h1>No of skipped items: {{page*queryParams.limit}}</h1>-->
+    <!--<h1>{{times}}</h1>-->
+    <!--<h1>{{response}}</h1>-->
+
+
     <a href="#/addtask" class="button">Add task</a>
     <div class="row">
-        <a class="button">Previous</a>
-        <a class="button">Next</a>
+
+        <div class="columns small-4">
+            <label>
+                <input name="completeness" type="radio" ng-model="queryParams.where.completed" ng-value="false"
+                       ng-change="completenessChanged()">Pending
+            </label>
+            <label>
+                <input name="completeness" type="radio" ng-model="queryParams.where.completed" ng-value="true"
+                       ng-change="completenessChanged()">Completed
+            </label>
+            <label>
+                <input name="completeness" type="radio" ng-model="queryParams.where.completed" ng-value="undefined"
+                       ng-change="completenessChanged()">All
+            </label>
+        </div>
+
+
+        <div class="columns small-4">
+            <h4>Sort by:</h4>
+            <select ng-model="sortBy" ng-options="item for item in sortOptions" ng-change="changeSortBy()">
+            </select>
+        </div>
+
+
+        <div class="columns small-4">
+            <label>
+                <input name="order" type="radio" ng-click="reorder()" ng-model="ascendingOrder" ng-value="true">Ascending
+            </label>
+            <label>
+                <input name="order" type="radio" ng-click="reorder()" ng-model="ascendingOrder" ng-value="false">Descending
+            </label>
+        </div>
+
     </div>
+
+
+    <div class="row">
+        <a class="button" ng-click="previousPage()">Previous</a>
+        <a class="button" ng-click="nextPage()">Next</a>
+    </div>
+
     <div class="row" ng-repeat="task in tasks">
         <h4 class="columns small-5">{{task.name}}</h4>
         <div class="columns small-5">
             <h4>Deadline: {{task.deadline | date:'yyyy/MM/dd HH:mm'}} <br>
-                Assigned to: {{task.assignedUserName}}</h4>
+                Assigned to: {{task.assignedUserName}}<br>
+                <!--Completed: {{task.completed}}-->
+            </h4>
         </div>
 
         <div class="columns small-1">
