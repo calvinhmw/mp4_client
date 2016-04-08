@@ -46,7 +46,8 @@ mp4Controllers.controller('SettingsController', ['$scope', '$window', function (
 mp4Controllers.controller('UserListController', ['$scope', 'Users', function ($scope, Users) {
     Users.get().then(function (response) {
         $scope.users = response.data.data;
-        console.log(response);
+        $scope.response = response;
+        //console.log(response);
     }, function (response) {
         //console.log('failed');
         $scope.errorCode = response.status;
@@ -110,7 +111,6 @@ mp4Controllers.controller('TaskListController', ['$scope', 'Tasks', function ($s
 
     $scope.getTasks = function () {
 
-        $scope.times++;
 
         var paramsWithCount = Object.assign({count: true}, $scope.queryParams);
         var paramsWithoutCount = Object.assign({count: false}, $scope.queryParams);
@@ -122,9 +122,9 @@ mp4Controllers.controller('TaskListController', ['$scope', 'Tasks', function ($s
             return Tasks.get(paramsWithoutCount);
         }).then(function (response) {
             $scope.tasks = response.data.data;
-            //$scope.response = response;
-        }, function (response) {
             $scope.response = response;
+        }, function (response) {
+            //$scope.response = response;
             $scope.errorCode = response.status;
             $scope.errorText = response.statusText;
         });
@@ -155,18 +155,23 @@ mp4Controllers.controller('TaskListController', ['$scope', 'Tasks', function ($s
     };
 
     $scope.reorder = function () {
+        $scope.times++;
         $scope.queryParams.sort[$scope.sortBy] = $scope.ascendingOrder ? 1 : -1;
     };
 
     $scope.changeSortBy = function () {
         for (var prop in $scope.queryParams.sort) {
-            $scope.queryParams.sort[prop]=undefined;
+            $scope.queryParams.sort[prop] = undefined;
         }
         $scope.queryParams.sort[$scope.sortBy] = $scope.ascendingOrder ? 1 : -1;
     };
 
     $scope.$watch('queryParams', $scope.getTasks, true);
 
+}]);
+
+mp4Controllers.controller('AddTaskController', ['$scope', 'Tasks', function ($scope, Tasks) {
+    
 }]);
 
 

@@ -5,10 +5,10 @@
 
 <div>
 
-    <!--<h1>total page: {{count}}</h1>-->
-    <!--<h1>current page: {{page}}</h1>-->
-    <!--<h1>No of skipped items: {{page*queryParams.limit}}</h1>-->
-    <!--<h1>{{times}}</h1>-->
+    <h1>total page: {{count}}</h1>
+    <h1>current page: {{page}}</h1>
+    <h1>No of skipped items: {{page*queryParams.limit}}</h1>
+    <h1>{{times}}</h1>
     <!--<h1>{{response}}</h1>-->
 
 
@@ -40,10 +40,10 @@
 
         <div class="columns small-4">
             <label>
-                <input name="order" type="radio" ng-click="reorder()" ng-model="ascendingOrder" ng-value="true">Ascending
+                <input name="order" type="radio" ng-change="reorder()" ng-model="ascendingOrder" ng-value="true">Ascending
             </label>
             <label>
-                <input name="order" type="radio" ng-click="reorder()" ng-model="ascendingOrder" ng-value="false">Descending
+                <input name="order" type="radio" ng-change="reorder()" ng-model="ascendingOrder" ng-value="false">Descending
             </label>
         </div>
 
@@ -60,7 +60,8 @@
         <div class="columns small-5">
             <h4>Deadline: {{task.deadline | date:'yyyy/MM/dd HH:mm'}} <br>
                 Assigned to: {{task.assignedUserName}}<br>
-                <!--Completed: {{task.completed}}-->
+                Completed: {{task.completed}}<br>
+                Date Created: {{task.dateCreated}}
             </h4>
         </div>
 

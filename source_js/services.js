@@ -41,8 +41,13 @@ mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
     //};
     var baseUrl = $window.sessionStorage.baseurl;
     return {
-        get: function () {
-            return $http.get(baseUrl + '/api/users');
+        get: function (queryParams) {
+            var config = {
+                method: 'GET',
+                url: baseUrl+'/api/users',
+                params: queryParams
+            };
+            return $http(config);
         },
         add: function (name, email) {
             var data = {
