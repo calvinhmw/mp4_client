@@ -58,7 +58,10 @@ mp4Controllers.controller('UserListController', ['$scope', 'Users', function ($s
 
 mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Users', function ($scope, $routeParams, Users) {
     $scope.userId = $routeParams.id;
+    Users.getDetail($scope.userId).then(function(response){
+        $scope.user = response.data.data;
 
+    });
 }]);
 
 

@@ -60,7 +60,11 @@ mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
 
         },
         getDetail: function(id){
-
+            var config = {
+                method: 'GET',
+                url: baseUrl + '/api/users/'+id,
+            };
+            return $http(config);
         },
         update: function(id){
 
