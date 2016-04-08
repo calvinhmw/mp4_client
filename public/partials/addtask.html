@@ -1,10 +1,10 @@
-<form name="addtask" ng-submit="addTask()" novalidate>
+<form name="addtask" ng-submit="addTask(addtask)" novalidate>
     <div class="row full-width">
         <div class="columns small-4">
             <label>Name <span class="required-field">*</span>
                 <input type="text" name="name" ng-model="name" required>
-                <div ng-show="adduser.$submitted || adduser.name.$touched">
-                    <span ng-show="adduser.name.$error.required">A name is required!</span>
+                <div ng-show="addtask.$submitted || addtask.name.$touched">
+                    <span ng-show="addtask.name.$error.required">A task name is required!</span>
                 </div>
             </label>
         </div>
@@ -14,7 +14,7 @@
     <div class="row full-width">
         <div class="columns small-4">
             <label>Description
-                <input type="text" name="description" ng-model="description" required>
+                <input type="text" name="description" ng-model="description">
             </label>
         </div>
     </div>
@@ -23,13 +23,26 @@
         <div class="columns small-4">
             <label>Deadline<span class="required-field">*</span>
                 <datepicker>
-                    <input ng-model="deadline" type="text"/>
+                    <input name="deadline" ng-model="deadline" type="text" required/>
+                    <div ng-show="addtask.$submitted || addtask.deadline.$touched">
+                        <span ng-show="addtask.deadline.$error.required">Enter a valid date!</span>
+                    </div>
                 </datepicker>
             </label>
-            {{deadline | date:'yyyy/MM/dd HH:mm'}}
+        </div>
+    </div>
+
+
+    <div class="row full-width">
+        <div class="columns small-4">
+            <label>Assigned User
+                <select ng-model="assignedUser" ng-options="user.name for user in users">
+                </select>
+            </label>
 
         </div>
     </div>
+
 
     <div class="row full-width">
         <div class="columns small-1">
@@ -39,7 +52,9 @@
         </div>
     </div>
 
+
 </form>
 
+<!--<p>{{response}}</p>-->
 <h1>{{successMsg}}</h1>
 <h1>{{errorMsg}}</h1>

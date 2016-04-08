@@ -61,7 +61,7 @@ mp4Controllers.controller('AddUserController', ['$scope', 'Users', function ($sc
     $scope.errorMsg = "";
 
     $scope.addUser = function (form) {
-        if (form.$valid) {
+        if (form && form.$valid) {
             $scope.successMsg = "";
             $scope.response = "";
             $scope.errorMsg = "";
@@ -80,10 +80,10 @@ mp4Controllers.controller('AddUserController', ['$scope', 'Users', function ($sc
 
     $scope.resetForm = function (form) {
         if (form) {
+            $scope.email = null;
+            $scope.name = null;
             form.$setPristine();
             form.$setUntouched();
-            $scope.email = "";
-            $scope.name = "";
         }
     }
 }]);
@@ -170,8 +170,50 @@ mp4Controllers.controller('TaskListController', ['$scope', 'Tasks', function ($s
 
 }]);
 
-mp4Controllers.controller('AddTaskController', ['$scope', 'Tasks', function ($scope, Tasks) {
-    
+mp4Controllers.controller('AddTaskController', ['$scope', 'Tasks', 'Users', function ($scope, Tasks, Users) {
+    $scope.deadline = (new Date(Date.now())).toString();
+    $scope.queryParams = {
+        select: {
+            name: 1,
+            _id: 1
+        }
+    };
+
+    Users.get($scope.queryParams).then(function (response) {
+        $scope.users = response.data.data;
+    });
+
+
+    $scope.addTask = function (form) {
+        if (form && form.$valid) {
+            data = {
+                name: $scope.name,
+                description: $scope.description,
+                deadline: $scope.deadline,
+                assignedUser: $scope.assignedUser ? $scope.assignedUser._id : undefined,
+                assignedUserName: $scope.assignedUser ? $scope.assignedUser.name : undefined
+            };
+            Tasks.add(data).then(function (response) {
+                $scope.response = response;
+                $scope.successMsg = "Task "+data.name+" added";
+            }, function (response) {
+                $scope.response = response;
+                $scope.errorMsg = response.data.message;
+            });
+            $scope.resetForm(form);
+        }
+    };
+
+    $scope.resetForm = function (form) {
+        if (form) {
+            $scope.deadline = (new Date(Date.now())).toString();
+            $scope.name = null;
+            $scope.description = null;
+            $scope.assignedUser = null;
+            form.$setPristine();
+            form.$setUntouched();
+        }
+    }
 }]);
 
 

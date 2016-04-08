@@ -44,7 +44,7 @@ mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
         get: function (queryParams) {
             var config = {
                 method: 'GET',
-                url: baseUrl+'/api/users',
+                url: baseUrl + '/api/users',
                 params: queryParams
             };
             return $http(config);
@@ -73,8 +73,16 @@ mp4Services.factory('Tasks', ['$http', '$window', function ($http, $window) {
         get: function (queryParams) {
             var config = {
                 method: 'GET',
-                url: baseUrl+'/api/tasks',
+                url: baseUrl + '/api/tasks',
                 params: queryParams
+            };
+            return $http(config);
+        },
+        add: function (data) {
+            var config = {
+                method: 'POST',
+                url: baseUrl+'/api/tasks',
+                data: data
             };
             return $http(config);
         }
