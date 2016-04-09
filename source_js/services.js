@@ -26,19 +26,6 @@ mp4Services.factory('Llamas', function ($http, $window) {
 // begin writing customized services here
 
 mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
-    //return {
-    //    get: function (successCallback, errorCallback) {
-    //        var baseUrl = $window.sessionStorage.baseurl;
-    //        $http.get(baseUrl + '/api/users').then(
-    //            function (response) {
-    //                successCallback(response.data);
-    //            },
-    //            function (error) {
-    //                errorCallback(error.status, error.statusText);
-    //            }
-    //        );
-    //    }
-    //};
     var baseUrl = $window.sessionStorage.baseurl;
     return {
         get: function (queryParams) {
@@ -59,15 +46,20 @@ mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
         delete: function (id) {
 
         },
-        getDetail: function(id){
+        getDetail: function (id) {
             var config = {
                 method: 'GET',
-                url: baseUrl + '/api/users/'+id,
+                url: baseUrl + '/api/users/' + id
             };
             return $http(config);
         },
-        update: function(id){
-
+        update: function (id, data) {
+            var config = {
+                method: 'PUT',
+                url: baseUrl + '/api/users/' + id,
+                data: data
+            };
+            return $http(config);
         }
     }
 
@@ -77,9 +69,6 @@ mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
 mp4Services.factory('Tasks', ['$http', '$window', function ($http, $window) {
     var baseUrl = $window.sessionStorage.baseurl;
     return {
-        //getCount: function(){
-        //    return $http.get(baseUrl+'/api/tasks', {params: {count:true}});
-        //},
         get: function (queryParams) {
             var config = {
                 method: 'GET',
@@ -91,7 +80,22 @@ mp4Services.factory('Tasks', ['$http', '$window', function ($http, $window) {
         add: function (data) {
             var config = {
                 method: 'POST',
-                url: baseUrl+'/api/tasks',
+                url: baseUrl + '/api/tasks',
+                data: data
+            };
+            return $http(config);
+        },
+        getDetail: function (id) {
+            var config = {
+                method: 'GET',
+                url: baseUrl + '/api/tasks/' + id
+            };
+            return $http(config);
+        },
+        update: function (id, data) {
+            var config = {
+                method: 'PUT',
+                url: baseUrl + '/api/tasks/' + id,
                 data: data
             };
             return $http(config);

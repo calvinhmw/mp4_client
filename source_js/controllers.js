@@ -56,12 +56,68 @@ mp4Controllers.controller('UserListController', ['$scope', 'Users', function ($s
 }]);
 
 
-mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Users', function ($scope, $routeParams, Users) {
-    $scope.userId = $routeParams.id;
-    Users.getDetail($scope.userId).then(function(response){
-        $scope.user = response.data.data;
+mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Users', 'Tasks', function ($scope, $routeParams, Users, Tasks) {
 
-    });
+    var updateUserDetail = function () {
+        Users.getDetail($scope.userId).then(function (response) {
+            $scope.user = response.data.data;
+            var tasksQuery = {
+                where: {
+                    "_id": {
+                        $in: $scope.user.pendingTasks
+                    }
+                }
+            };
+            return Tasks.get(tasksQuery);
+        }).then(function (response) {
+            //$scope.response = response;
+            $scope.pendingTasks = response.data.data;
+        }, function (response) {
+            $scope.response = response;
+            $scope.errorMsg = response.data.message;
+        });
+    };
+
+    $scope.markTaskComplete = function (taskId) {
+
+        //Query the task that is just completed by the user, change it's completed to true
+        Tasks.getDetail(taskId).then(function (response) {
+            var taskToUpdate = response.data.data;
+            taskToUpdate.completed = true;
+            // send a put request to update the task
+            return Tasks.update(taskId, taskToUpdate);
+        }).then(function (response) {
+            //delete the task from user(local)'s pending task array
+            var userToUpdate = $scope.user;
+            var idxToRemove = userToUpdate.pendingTasks.indexOf(taskId);
+            if (idxToRemove > -1) {
+                userToUpdate.pendingTasks.splice(idxToRemove, 1);
+            }
+            //send a put request to update the user
+            return Users.update($scope.userId, userToUpdate);
+        }).then(function (response) {
+            updateUserDetail();
+        },function(response){
+            $scope.errorMsg = response.data.message;
+        });
+    };
+
+    $scope.showCompletedTasks = function () {
+        var taskQuery = {
+            where: {
+                assignedUser: $scope.userId,
+                completed: true
+            }
+        };
+        Tasks.get(taskQuery).then(function (response) {
+            //$scope.response = response;
+            $scope.completedTasks = response.data.data;
+        });
+    };
+
+    $scope.userId = $routeParams.id;
+    updateUserDetail();
+
 }]);
 
 
