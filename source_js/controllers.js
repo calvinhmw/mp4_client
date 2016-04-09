@@ -87,6 +87,7 @@ mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Us
             // send a put request to update the task
             return Tasks.update(taskId, taskToUpdate);
         }).then(function (response) {
+            console.log(response);
             //delete the task from user(local)'s pending task array
             var userToUpdate = $scope.user;
             var idxToRemove = userToUpdate.pendingTasks.indexOf(taskId);
@@ -97,7 +98,7 @@ mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Us
             return Users.update($scope.userId, userToUpdate);
         }).then(function (response) {
             updateUserDetail();
-        },function(response){
+        }, function (response) {
             $scope.errorMsg = response.data.message;
         });
     };
@@ -111,6 +112,7 @@ mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Us
         };
         Tasks.get(taskQuery).then(function (response) {
             //$scope.response = response;
+            console.log(response);
             $scope.completedTasks = response.data.data;
         });
     };
@@ -176,8 +178,6 @@ mp4Controllers.controller('TaskListController', ['$scope', 'Tasks', function ($s
     };
 
     $scope.getTasks = function () {
-
-
         var paramsWithCount = Object.assign({count: true}, $scope.queryParams);
         var paramsWithoutCount = Object.assign({count: false}, $scope.queryParams);
 
@@ -236,7 +236,7 @@ mp4Controllers.controller('TaskListController', ['$scope', 'Tasks', function ($s
 
 }]);
 
-mp4Controllers.controller('AddTaskController', ['$scope', 'Tasks', 'Users', function ($scope, Tasks, Users) {
+mp4Controllers.controller('AddTaskController', ['$scope', '$q', 'Tasks', 'Users', function ($scope, $q, Tasks, Users) {
     $scope.deadline = (new Date(Date.now())).toString();
     $scope.queryParams = {
         select: {
@@ -252,7 +252,7 @@ mp4Controllers.controller('AddTaskController', ['$scope', 'Tasks', 'Users', func
 
     $scope.addTask = function (form) {
         if (form && form.$valid) {
-            data = {
+            var data = {
                 name: $scope.name,
                 description: $scope.description,
                 deadline: $scope.deadline,
@@ -260,12 +260,25 @@ mp4Controllers.controller('AddTaskController', ['$scope', 'Tasks', 'Users', func
                 assignedUserName: $scope.assignedUser ? $scope.assignedUser.name : undefined
             };
             Tasks.add(data).then(function (response) {
-                $scope.response = response;
-                $scope.successMsg = "Task " + data.name + " added";
+                //task added, now need to update user's pending tasks array
+                $scope.taskId = response.data.data._id;
+                if (data.assignedUser) {
+                    console.log(response);
+                    return Users.getDetail(data.assignedUser);
+                } else {
+                    // break premise chain here
+                    return $q.reject({ data:{message: 'task is unassigned' }});
+                }
+            }).then(function (response) {
+                var user = response.data.data;
+                user.pendingTasks.push($scope.taskId);
+                return Users.update(data.assignedUser, user);
+            }).then(function (response) {
+                console.log(response);
             }, function (response) {
-                $scope.response = response;
-                $scope.errorMsg = response.data.message;
+                console.log(response.data.message);
             });
+
             $scope.resetForm(form);
         }
     };
