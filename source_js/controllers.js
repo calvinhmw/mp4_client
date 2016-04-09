@@ -58,6 +58,7 @@ mp4Controllers.controller('UserListController', ['$scope', 'Users', function ($s
 
 mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Users', 'Tasks', function ($scope, $routeParams, Users, Tasks) {
 
+    $scope.userId = $routeParams.id;
     var updateUserDetail = function () {
         Users.getDetail($scope.userId).then(function (response) {
             $scope.user = response.data.data;
@@ -117,7 +118,6 @@ mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Us
         });
     };
 
-    $scope.userId = $routeParams.id;
     updateUserDetail();
 
 }]);
@@ -236,6 +236,39 @@ mp4Controllers.controller('TaskListController', ['$scope', 'Tasks', function ($s
 
 }]);
 
+
+mp4Controllers.controller('TaskDetailController', ['$scope', '$routeParams', 'Tasks', function ($scope, $routeParams, Tasks) {
+    $scope.taskId = $routeParams.id;
+    Tasks.getDetail($scope.taskId).then(function (response) {
+        $scope.task = response.data.data;
+    }, function (response) {
+        $scope.errorMsg = response.data.message;
+    });
+}]);
+
+mp4Controllers.controller('EditTaskController', ['$scope', '$q', '$routeParams', 'Tasks', 'Users', function ($scope, $q, $routeParams, Tasks, Users) {
+    $scope.taskId = $routeParams.id;
+    Tasks.getDetail($scope.taskId).then(function (response) {
+        console.log(response);
+        $scope.task = response.data.data;
+        $scope.assignedUserName = $scope.task.assignedUserName;
+    }, function (response) {
+        $scope.errorMsg = response.data.message;
+    });
+
+    $scope.queryParams = {
+        select: {
+            name: 1,
+            _id: 1
+        }
+    };
+    Users.get($scope.queryParams).then(function (response) {
+        $scope.users = response.data.data;
+    });
+
+}]);
+
+
 mp4Controllers.controller('AddTaskController', ['$scope', '$q', 'Tasks', 'Users', function ($scope, $q, Tasks, Users) {
     $scope.deadline = (new Date(Date.now())).toString();
     $scope.queryParams = {
@@ -267,7 +300,7 @@ mp4Controllers.controller('AddTaskController', ['$scope', '$q', 'Tasks', 'Users'
                     return Users.getDetail(data.assignedUser);
                 } else {
                     // break premise chain here
-                    return $q.reject({ data:{message: 'task is unassigned' }});
+                    return $q.reject({data: {message: 'task is unassigned'}});
                 }
             }).then(function (response) {
                 var user = response.data.data;

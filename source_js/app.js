@@ -25,9 +25,15 @@ app.config(['$routeProvider', function ($routeProvider) {
     }).when('/tasks', {
         templateUrl: 'partials/tasks.html',
         controller: 'TaskListController'
+    }).when('/tasks/:id', {
+        templateUrl: 'partials/taskdetail.html',
+        controller: 'TaskDetailController'
     }).when('/addtask', {
         templateUrl: 'partials/addtask.html',
         controller: 'AddTaskController'
+    }).when('/edittask/:id', {
+        templateUrl: 'partials/edittask.html',
+        controller: 'EditTaskController'
     }).otherwise({
         redirectTo: '/settings'
     });

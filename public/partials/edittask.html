@@ -1,11 +1,11 @@
-<h1>Add a task</h1>
-<form name="addtask" ng-submit="addTask(addtask)" novalidate>
+<h1>Edit task</h1>
+<form name="edittask" novalidate>
     <div class="row full-width">
         <div class="columns small-4">
             <label>Name <span class="required-field">*</span>
-                <input type="text" name="name" ng-model="name" required>
-                <div ng-show="addtask.$submitted || addtask.name.$touched">
-                    <span ng-show="addtask.name.$error.required">A task name is required!</span>
+                <input type="text" name="name" ng-model="task.name" required>
+                <div ng-show="edittask.$submitted || edittask.name.$touched">
+                    <span ng-show="edittask.name.$error.required">A task name is required!</span>
                 </div>
             </label>
         </div>
@@ -15,7 +15,7 @@
     <div class="row full-width">
         <div class="columns small-4">
             <label>Description
-                <input type="text" name="description" ng-model="description">
+                <input type="text" name="description" ng-model="task.description">
             </label>
         </div>
     </div>
@@ -24,9 +24,9 @@
         <div class="columns small-4">
             <label>Deadline<span class="required-field">*</span>
                 <datepicker>
-                    <input name="deadline" ng-model="deadline" type="text" required/>
-                    <div ng-show="addtask.$submitted || addtask.deadline.$touched">
-                        <span ng-show="addtask.deadline.$error.required">Enter a valid date!</span>
+                    <input name="deadline" ng-model="task.deadline" type="text" required/>
+                    <div ng-show="edittask.$submitted || edittask.deadline.$touched">
+                        <span ng-show="edittask.deadline.$error.required">Enter a valid date!</span>
                     </div>
                 </datepicker>
             </label>
@@ -37,12 +37,12 @@
     <div class="row full-width">
         <div class="columns small-4">
             <label>Assigned User
-                <select ng-model="assignedUser" ng-options="user.name for user in users">
+                <select ng-model="assignedUserName" ng-options="user.name for user in users">
                 </select>
             </label>
-
         </div>
     </div>
+
 
 
     <div class="row full-width">

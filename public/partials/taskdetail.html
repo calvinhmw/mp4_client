@@ -1,0 +1,23 @@
+<h2>Task</h2>
+
+
+<div>
+    <a href="#/edittask/{{task._id}}" type="button" class="alert button">Edit task</a>
+</div>
+
+
+<div class="row">
+    <h4 class="columns small-4">{{task.name}}</h4>
+    <div class="columns small-4">
+        <h5>Deadline: {{task.deadline | date:'yyyy/MM/dd HH:mm'}}</h5><br>
+        <p>Completed: {{task.completed}}</p>
+    </div>
+</div>
+
+<div class="row">
+    <h4 class="columns small-4">Assigned to: {{task.assignedUserName}}</h4>
+</div>
+
+
+<!--{{response}}-->
+{{errorMsg}}
