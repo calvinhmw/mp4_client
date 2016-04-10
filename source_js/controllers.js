@@ -14,16 +14,57 @@ mp4Controllers.controller('SettingsController', ['$scope', '$window', 'UserStore
     };
 }]);
 
-mp4Controllers.controller('UserListController', ['$scope', 'Users', function ($scope, Users) {
-    Users.get().then(function (response) {
-        $scope.users = response.data.data;
-        $scope.response = response;
-        //console.log(response);
-    }, function (response) {
-        //console.log('failed');
-        $scope.errorCode = response.status;
-        $scope.errorText = response.statusText;
-    });
+mp4Controllers.controller('UserListController', ['$scope', '$q', 'Users', 'Tasks', function ($scope, $q, Users, Tasks) {
+    var updateUserList = function () {
+        Users.get().then(function (response) {
+            $scope.users = response.data.data;
+            $scope.response = response;
+            //console.log(response);
+        }, function (response) {
+            //console.log('failed');
+            $scope.errorCode = response.status;
+            $scope.errorText = response.statusText;
+        });
+    };
+
+    $scope.deleteUser = function (userId) {
+        // first find the user:
+        var user = $scope.users.filter(function (u) {
+            return userId == u._id;
+        })[0];
+
+        //try deleting the user
+        Users.delete(userId).then(function (response) {
+            //console.log(response);
+            updateUserList();
+            //retrieve all pending tasks of the user
+            var queryParams = {
+                where: {
+                    "_id": {
+                        $in: user.pendingTasks
+                    }
+                }
+            };
+            return Tasks.get(queryParams);
+        }).then(function (response) {
+            // for all retrieved pending tasks, change them to unassigned
+            var pendingTasks = response.data.data;
+            var premises = [];
+            for (var i = 0; i < pendingTasks.length; i++) {
+                pendingTasks[i].assignedUserName = 'unassigned';
+                pendingTasks[i].assignedUser = undefined;
+                premises.push(Tasks.update(pendingTasks[i]._id, pendingTasks[i]));
+            }
+            return $q.all(premises);
+        }).then(function (response) {
+            console.log(response);
+        }, function (response) {
+            console.log(response);
+        });
+    };
+
+    updateUserList();
+
 }]);
 
 
@@ -107,13 +148,16 @@ mp4Controllers.controller('AddUserController', ['$scope', 'Users', function ($sc
             $scope.successMsg = "";
             $scope.response = "";
             $scope.errorMsg = "";
-            var name = $scope.name;
-            var email = $scope.email;
-            Users.add(name, email).then(function (response) {
-                $scope.response = response;
-                $scope.successMsg = "User " + name + " added!";
+            var data = {
+                name: $scope.name,
+                email: $scope.email
+            };
+            Users.add(data).then(function (response) {
+                //$scope.response = response;
+                $scope.successMsg = "User " + response.data.data.name + " added!";
+                console.log(response);
             }, function (response) {
-                $scope.response = response;
+                //$scope.response = response;
                 $scope.errorMsg = response.data.message;
             });
             $scope.resetForm(form);
@@ -131,7 +175,7 @@ mp4Controllers.controller('AddUserController', ['$scope', 'Users', function ($sc
 }]);
 
 
-mp4Controllers.controller('TaskListController', ['$scope', 'Tasks', function ($scope, Tasks) {
+mp4Controllers.controller('TaskListController', ['$scope', '$q', 'Tasks', 'Users', function ($scope, $q, Tasks, Users) {
     $scope.count = 0;
     $scope.page = 0;
     $scope.times = 0;
@@ -151,7 +195,7 @@ mp4Controllers.controller('TaskListController', ['$scope', 'Tasks', function ($s
         limit: 10
     };
 
-    $scope.getTasks = function () {
+    var updateTaskList = function () {
         var paramsWithCount = Object.assign({count: true}, $scope.queryParams);
         var paramsWithoutCount = Object.assign({count: false}, $scope.queryParams);
 
@@ -206,7 +250,31 @@ mp4Controllers.controller('TaskListController', ['$scope', 'Tasks', function ($s
         $scope.queryParams.sort[$scope.sortBy] = $scope.ascendingOrder ? 1 : -1;
     };
 
-    $scope.$watch('queryParams', $scope.getTasks, true);
+    $scope.deleteTask = function (taskId) {
+        // first find the task
+        var task = $scope.tasks.filter(function (t) {
+            return taskId == t._id;
+        })[0];
+        if (task) {
+            // first delete the task
+            Tasks.delete(task._id).then(function (response) {
+                // find the user who is assigned to the task:
+                if(!task.assignedUserName || task.assignedUserName == 'unassigned'){
+                    updateTaskList();
+                    return $q.reject({data: {message: 'deleting an unassigned task'}});
+                }
+                return Users.getDetail(task.assignedUser);
+            }).then(function(response){
+                //console.log(response);
+                // to do: remove the pending task from the user's pending task lists
+            },function(response){
+                console.log(response);
+            });
+        }
+
+    };
+
+    $scope.$watch('queryParams', updateTaskList, true);
 
 }]);
 

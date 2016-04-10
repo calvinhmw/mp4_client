@@ -14,15 +14,20 @@ mp4Services.factory('Users', ['$http', '$window', function ($http, $window) {
             };
             return $http(config);
         },
-        add: function (name, email) {
-            var data = {
-                name: name,
-                email: email
+        add: function (data) {
+            var config = {
+                method: 'POST',
+                url: baseUrl + '/api/users',
+                data: data
             };
-            return $http.post(baseUrl + '/api/users', data);
+            return $http(config);
         },
         delete: function (id) {
-
+            var config = {
+                method: 'DELETE',
+                url: baseUrl + '/api/users/' + id
+            };
+            return $http(config);
         },
         getDetail: function (id) {
             var config = {
@@ -63,6 +68,13 @@ mp4Services.factory('Tasks', ['$http', '$window', function ($http, $window) {
             };
             return $http(config);
         },
+        delete: function (id) {
+            var config = {
+                method: 'DELETE',
+                url: baseUrl + '/api/tasks/' + id
+            };
+            return $http(config);
+        },
         getDetail: function (id) {
             var config = {
                 method: 'GET',
@@ -85,7 +97,7 @@ mp4Services.factory('Tasks', ['$http', '$window', function ($http, $window) {
 // UserStore purpose: store all users in a dictionary for easy query
 mp4Services.factory('UserStore', ['Users', function (Users) {
     var userStore = {};
-    userStore.users = {sasa:2};
+    userStore.users = {sasa: 2};
     userStore.status = "current tasks";
     userStore.update = function () {
         userStore.users = {};
