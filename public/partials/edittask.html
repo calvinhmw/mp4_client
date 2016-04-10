@@ -1,5 +1,5 @@
 <h1>Edit task</h1>
-<form name="edittask" novalidate>
+<form name="edittask" ng-submit="editTask(edittask)" novalidate>
     <div class="row full-width">
         <div class="columns small-4">
             <label>Name <span class="required-field">*</span>
@@ -37,13 +37,24 @@
     <div class="row full-width">
         <div class="columns small-4">
             <label>Assigned User
-                <select ng-model="assignedUserName" ng-options="user.name for user in users">
+                <select ng-model="selectedUser" ng-options="user.name for user in users">
                 </select>
             </label>
         </div>
     </div>
 
 
+    <div class="row">
+        <div class="columns small-1">Completed:</div>
+        <div class="columns small-11">
+            <label>
+                <input name="completed" type="radio" ng-model="task.completed" ng-value="true">Yes
+            </label>
+            <label>
+                <input name="completed" type="radio" ng-model="task.completed" ng-value="false">No
+            </label>
+        </div>
+    </div>
 
     <div class="row full-width">
         <div class="columns small-1">
@@ -53,9 +64,10 @@
         </div>
     </div>
 
-
 </form>
 
+{{selectedUser}}<br>
+{{task}}
 <!--<p>{{response}}</p>-->
 <h1>{{successMsg}}</h1>
 <h1>{{errorMsg}}</h1>

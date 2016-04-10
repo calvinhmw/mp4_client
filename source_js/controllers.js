@@ -1,45 +1,16 @@
 var mp4Controllers = angular.module('mp4Controllers', []);
 
-mp4Controllers.controller('FirstController', ['$scope', 'CommonData', function ($scope, CommonData) {
-    $scope.data = "";
-    $scope.displayText = ""
-
-    $scope.setData = function () {
-        CommonData.setData($scope.data);
-        $scope.displayText = "Data set"
-
-    };
-
-}]);
-
-mp4Controllers.controller('SecondController', ['$scope', 'CommonData', function ($scope, CommonData) {
-    $scope.data = "";
-
-    $scope.getData = function () {
-        $scope.data = CommonData.getData();
-
-    };
-
-}]);
-
-
-mp4Controllers.controller('LlamaListController', ['$scope', '$http', 'Llamas', '$window', function ($scope, $http, Llamas, $window) {
-    Llamas.get().success(function (data) {
-        $scope.llamas = data;
-    });
-
-
-}]);
-
 // begin writing customized controllers here
 
-mp4Controllers.controller('SettingsController', ['$scope', '$window', function ($scope, $window) {
+mp4Controllers.controller('SettingsController', ['$scope', '$window', 'UserStore', 'TaskStore',function ($scope, $window, UserStore, TaskStore) {
     $scope.url = $window.sessionStorage.baseurl;
     $scope.setUrl = function () {
         // http://www.uiucwp.com:4000
         console.log($scope.url);
         $window.sessionStorage.baseurl = $scope.url;
         $scope.displayText = "URL set";
+        UserStore.update();
+        //TaskStore.update();
     };
 }]);
 
@@ -73,6 +44,7 @@ mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Us
         }).then(function (response) {
             //$scope.response = response;
             $scope.pendingTasks = response.data.data;
+            //console.log($scope.pendingTasks);
         }, function (response) {
             $scope.response = response;
             $scope.errorMsg = response.data.message;
@@ -81,13 +53,13 @@ mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Us
 
     $scope.markTaskComplete = function (taskId) {
 
-        //Query the task that is just completed by the user, change it's completed to true
-        Tasks.getDetail(taskId).then(function (response) {
-            var taskToUpdate = response.data.data;
-            taskToUpdate.completed = true;
-            // send a put request to update the task
-            return Tasks.update(taskId, taskToUpdate);
-        }).then(function (response) {
+        // without re-querying the task, use the pending task array we just created
+        var taskToUpdate = $scope.pendingTasks.filter(function (task) {
+            return task._id == taskId;
+        })[0];
+        taskToUpdate.completed = true;
+
+        Tasks.update(taskId, taskToUpdate).then(function (response) {
             console.log(response);
             //delete the task from user(local)'s pending task array
             var userToUpdate = $scope.user;
@@ -98,10 +70,11 @@ mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Us
             //send a put request to update the user
             return Users.update($scope.userId, userToUpdate);
         }).then(function (response) {
-            updateUserDetail();
-        }, function (response) {
-            $scope.errorMsg = response.data.message;
-        });
+                updateUserDetail();
+            }, function (response) {
+                $scope.errorMsg = response.data.message;
+            }
+        );
     };
 
     $scope.showCompletedTasks = function () {
@@ -112,9 +85,10 @@ mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Us
             }
         };
         Tasks.get(taskQuery).then(function (response) {
-            //$scope.response = response;
-            console.log(response);
+            //console.log(response);
             $scope.completedTasks = response.data.data;
+        }, function (response) {
+            $scope.errorMsg = response.data.message;
         });
     };
 
@@ -249,9 +223,7 @@ mp4Controllers.controller('TaskDetailController', ['$scope', '$routeParams', 'Ta
 mp4Controllers.controller('EditTaskController', ['$scope', '$q', '$routeParams', 'Tasks', 'Users', function ($scope, $q, $routeParams, Tasks, Users) {
     $scope.taskId = $routeParams.id;
     Tasks.getDetail($scope.taskId).then(function (response) {
-        console.log(response);
         $scope.task = response.data.data;
-        $scope.assignedUserName = $scope.task.assignedUserName;
     }, function (response) {
         $scope.errorMsg = response.data.message;
     });
@@ -262,9 +234,43 @@ mp4Controllers.controller('EditTaskController', ['$scope', '$q', '$routeParams',
             _id: 1
         }
     };
+
     Users.get($scope.queryParams).then(function (response) {
         $scope.users = response.data.data;
+
+        $scope.selectedUser = $scope.users.filter(function(user){
+            return user._id == $scope.task.assignedUser;
+        })[0];
+    },function(response){
+        $scope.errorMsg = response.data.message;
     });
+
+    $scope.editTask = function (form) {
+        if (form && form.$valid) {
+            $scope.task.assignedUser = $scope.selectedUser._id;
+            $scope.task.assignedUserName = $scope.selectedUser.name;
+
+            Tasks.add($scope.task).then(function (response) {
+                //task edited, now need to update user's pending tasks array
+                $scope.successMsg = "Task " + data.name+" added";
+                if ($scope.task.assignedUser) {
+                    console.log(response);
+                    return Users.getDetail(data.assignedUser);
+                } else {
+                    // break premise chain here
+                    return $q.reject({data: {message: 'task is unassigned'}});
+                }
+            }).then(function (response) {
+                var user = response.data.data;
+                user.pendingTasks.push($scope.taskId);
+                return Users.update(data.assignedUser, user);
+            }).then(function (response) {
+                console.log(response);
+            }, function (response) {
+                console.log(response.data.message);
+            });
+        }
+    };
 
 }]);
 
@@ -294,6 +300,7 @@ mp4Controllers.controller('AddTaskController', ['$scope', '$q', 'Tasks', 'Users'
             };
             Tasks.add(data).then(function (response) {
                 //task added, now need to update user's pending tasks array
+                $scope.successMsg = "Task " + data.name+" added";
                 $scope.taskId = response.data.data._id;
                 if (data.assignedUser) {
                     console.log(response);

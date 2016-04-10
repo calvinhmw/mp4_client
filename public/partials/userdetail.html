@@ -7,9 +7,12 @@
 
 <h2>Pending Tasks</h2>
 <div class="row" ng-repeat="task in pendingTasks">
+
     <div class="columns small-4">{{task.name}}</div>
-    <!--<div class="columns small-1">{{task.completed}}</div>-->
+    <div class="columns small-4">{{task._id}}</div>
+    <div class="columns small-4">{{task.completed}}</div>
     <div class="columns small-4">Deadline: {{task.deadline | date:'yyyy/MM/dd HH:mm'}}</div>
+
     <div class="columns small-4">
         <span class="secondary button" ng-click="markTaskComplete(task._id)">Completed</span>
     </div>
@@ -21,6 +24,8 @@
 </div>
 <div class="row" ng-repeat="task in completedTasks">
     <div class="columns small-5">{{task.name}}</div>
+    <div class="columns small-4">{{task._id}}</div>
+    <div class="columns small-4">{{task.completed}}</div>
     <div class="columns small-6">Deadline: {{task.deadline | date:'yyyy/MM/dd HH:mm'}}</div>
 </div>
 
