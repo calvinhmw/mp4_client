@@ -11,6 +11,11 @@
     <h1>{{times}}</h1>
     <!--<h1>{{response}}</h1>-->
 
+    <div class="error">
+        <h3 class="error">{{errorCode}} : {{errorText}}</h3>
+        {{errorMsg}}<br>
+        {{successMsg}}
+    </div>
 
     <a href="#/addtask" class="button">Add task</a>
     <div class="row">
@@ -70,9 +75,7 @@
             <button type="button" ng-click="deleteTask(task._id)" class="alert button">Delete</button>
         </div>
     </div>
-    <div class="error">
-        <h3 class="error">{{errorCode}} : {{errorText}}</h3>
-    </div>
+
 </div>
 
 

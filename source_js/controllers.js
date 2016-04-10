@@ -33,36 +33,38 @@ mp4Controllers.controller('UserListController', ['$scope', '$q', 'Users', 'Tasks
             return userId == u._id;
         })[0];
 
-        //try deleting the user
-        Users.delete(userId).then(function (response) {
-            //console.log(response);
-            updateUserList();
-            //retrieve all pending tasks of the user
-            var queryParams = {
-                where: {
-                    "_id": {
-                        $in: user.pendingTasks
+        if (user) {
+            console.log('user exist');
+            //try deleting the user
+            Users.delete(userId).then(function (response) {
+                console.log(response);
+                updateUserList();
+                //retrieve all pending tasks of the user
+                var queryParams = {
+                    where: {
+                        "_id": {
+                            $in: user.pendingTasks
+                        }
                     }
+                };
+                return Tasks.get(queryParams);
+            }).then(function (response) {
+                // for all retrieved pending tasks, change them to unassigned
+                var pendingTasks = response.data.data;
+                var premises = [];
+                for (var i = 0; i < pendingTasks.length; i++) {
+                    pendingTasks[i].assignedUserName = 'unassigned';
+                    pendingTasks[i].assignedUser = undefined;
+                    premises.push(Tasks.update(pendingTasks[i]._id, pendingTasks[i]));
                 }
-            };
-            return Tasks.get(queryParams);
-        }).then(function (response) {
-            // for all retrieved pending tasks, change them to unassigned
-            var pendingTasks = response.data.data;
-            var premises = [];
-            for (var i = 0; i < pendingTasks.length; i++) {
-                pendingTasks[i].assignedUserName = 'unassigned';
-                pendingTasks[i].assignedUser = undefined;
-                premises.push(Tasks.update(pendingTasks[i]._id, pendingTasks[i]));
-            }
-            return $q.all(premises);
-        }).then(function (response) {
-            console.log(response);
-        }, function (response) {
-            console.log(response);
-        });
+                return $q.all(premises);
+            }).then(function (response) {
+                console.log(response);
+            }, function (response) {
+                console.log(response);
+            });
+        }
     };
-
     updateUserList();
 
 }]);
@@ -259,16 +261,28 @@ mp4Controllers.controller('TaskListController', ['$scope', '$q', 'Tasks', 'Users
             // first delete the task
             Tasks.delete(task._id).then(function (response) {
                 // find the user who is assigned to the task:
-                if(!task.assignedUserName || task.assignedUserName == 'unassigned'){
-                    updateTaskList();
+                if (!task.assignedUser || task.assignedUserName == 'unassigned') {
                     return $q.reject({data: {message: 'deleting an unassigned task'}});
                 }
                 return Users.getDetail(task.assignedUser);
-            }).then(function(response){
-                //console.log(response);
-                // to do: remove the pending task from the user's pending task lists
-            },function(response){
-                console.log(response);
+            }).then(function (response) {
+                console.log(response.data);
+                //remove the pending task from the user's pending task lists
+                var user = response.data.data;
+                var taskIdx = user.pendingTasks.indexOf(task._id);
+                if (taskIdx != -1) {
+                    user.pendingTasks.splice(taskIdx, 1);
+                    return Users.update(user._id, user);
+                }
+                return response;
+            }).then(function (response) {
+                console.log(response.data);
+                //$scope.successMsg = response.data.message;
+                updateTaskList();
+            }, function (response) {
+                console.log(response.data);
+                updateTaskList();
+                //$scope.errorMsg = response.data.message;
             });
         }
 
