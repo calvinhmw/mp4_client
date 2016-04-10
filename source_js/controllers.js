@@ -2,7 +2,7 @@ var mp4Controllers = angular.module('mp4Controllers', []);
 
 // begin writing customized controllers here
 
-mp4Controllers.controller('SettingsController', ['$scope', '$window', 'UserStore', 'TaskStore',function ($scope, $window, UserStore, TaskStore) {
+mp4Controllers.controller('SettingsController', ['$scope', '$window', 'UserStore', 'TaskStore', function ($scope, $window, UserStore, TaskStore) {
     $scope.url = $window.sessionStorage.baseurl;
     $scope.setUrl = function () {
         // http://www.uiucwp.com:4000
@@ -224,24 +224,27 @@ mp4Controllers.controller('EditTaskController', ['$scope', '$q', '$routeParams',
     $scope.taskId = $routeParams.id;
     Tasks.getDetail($scope.taskId).then(function (response) {
         $scope.task = response.data.data;
+        console.log(response);
     }, function (response) {
         $scope.errorMsg = response.data.message;
     });
 
-    $scope.queryParams = {
-        select: {
-            name: 1,
-            _id: 1
-        }
-    };
+    //$scope.queryParams = {
+    //    select: {
+    //        name: 1,
+    //        _id: 1
+    //    }
+    //};
 
-    Users.get($scope.queryParams).then(function (response) {
+    Users.get().then(function (response) {
         $scope.users = response.data.data;
-
-        $scope.selectedUser = $scope.users.filter(function(user){
+        $scope.selectedUser = $scope.users.filter(function (user) {
             return user._id == $scope.task.assignedUser;
         })[0];
-    },function(response){
+        // the following deep copy does not actually copy the pendingTasks array!
+        // previousUser and selectedUser shared the same pendingTasks memory !
+        $scope.previousUser = Object.assign({}, $scope.selectedUser);
+    }, function (response) {
         $scope.errorMsg = response.data.message;
     });
 
@@ -250,22 +253,48 @@ mp4Controllers.controller('EditTaskController', ['$scope', '$q', '$routeParams',
             $scope.task.assignedUser = $scope.selectedUser._id;
             $scope.task.assignedUserName = $scope.selectedUser.name;
 
-            Tasks.add($scope.task).then(function (response) {
+            Tasks.update($scope.task._id, $scope.task).then(function (response) {
                 //task edited, now need to update user's pending tasks array
-                $scope.successMsg = "Task " + data.name+" added";
-                if ($scope.task.assignedUser) {
-                    console.log(response);
-                    return Users.getDetail(data.assignedUser);
-                } else {
+                $scope.successMsg = "Task " + $scope.task.name + " edited";
+
+                if (!$scope.task.assignedUser) {
                     // break premise chain here
                     return $q.reject({data: {message: 'task is unassigned'}});
+                } else {
+                    // delete the task from previous user's pending task array
+                    var taskIdx = $scope.previousUser.pendingTasks.indexOf($scope.task._id);
+                    if (taskIdx != -1) {
+                        $scope.previousUser.pendingTasks.splice(taskIdx, 1);
+                        //console.log($scope.previousUser.pendingTasks);
+                    } else {
+                        console.log($scope.task._id + " does not exist in " + $scope.previousUser);
+                    }
+                    if (!$scope.task.completed) {
+                        // if the task if finished, we need to try deleting if from the selectedUser's pendingTasks(if they have it)
+                        taskIdx = $scope.selectedUser.pendingTasks.indexOf($scope.task._id);
+                        if (taskIdx == -1) {
+                            $scope.selectedUser.pendingTasks.push($scope.task._id);
+                        }
+                        //console.log($scope.previousUser.pendingTasks);
+
+                    } else {
+                        // otherwise, push the task id into selectedUser's pendingTasks(if they don't already have it)
+                        taskIdx = $scope.selectedUser.pendingTasks.indexOf($scope.task._id);
+                        if (taskIdx != -1) {
+                            $scope.selectedUser.pendingTasks.splice(taskIdx, 1);
+                        }
+                    }
+                    //console.log($scope.previousUser.pendingTasks);
                 }
+                return Users.update($scope.selectedUser._id, $scope.selectedUser);
             }).then(function (response) {
-                var user = response.data.data;
-                user.pendingTasks.push($scope.taskId);
-                return Users.update(data.assignedUser, user);
+                if ($scope.previousUser._id != $scope.selectedUser._id) {
+                    return Users.update($scope.previousUser._id, $scope.previousUser);
+                }
+                return response;
             }).then(function (response) {
-                console.log(response);
+                $scope.previousUser = Object.assign({}, $scope.selectedUser);
+                console.log(response.data.message);
             }, function (response) {
                 console.log(response.data.message);
             });
@@ -300,7 +329,7 @@ mp4Controllers.controller('AddTaskController', ['$scope', '$q', 'Tasks', 'Users'
             };
             Tasks.add(data).then(function (response) {
                 //task added, now need to update user's pending tasks array
-                $scope.successMsg = "Task " + data.name+" added";
+                $scope.successMsg = "Task " + data.name + " added";
                 $scope.taskId = response.data.data._id;
                 if (data.assignedUser) {
                     console.log(response);
