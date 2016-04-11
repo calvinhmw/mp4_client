@@ -1,6 +1,6 @@
 .DS_Store
 
-.idea
+.idea*
 .sass-cache/
 node_modules/
 npm-debug.log
