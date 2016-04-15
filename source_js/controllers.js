@@ -27,18 +27,22 @@ mp4Controllers.controller('UserListController', ['$scope', '$q', 'Users', 'Tasks
         });
     };
 
-    $scope.deleteUser = function (userId) {
+    $scope.deleteUser = function (userIdx) {
         // first find the user:
-        var user = $scope.users.filter(function (u) {
-            return userId == u._id;
-        })[0];
+        //var user = $scope.users.filter(function (u) {
+        //    return userId == u._id;
+        //})[0];
+        console.log(userIdx);
+        var user = $scope.users[userIdx];
 
         if (user) {
             //console.log('user exist');
             //try deleting the user
-            Users.delete(userId).then(function (response) {
+            Users.delete(user._id).then(function (response) {
                 console.log(response);
-                updateUserList();
+                $scope.users.splice(userIdx, 1);
+
+                //updateUserList();
                 //retrieve all pending tasks of the user
                 var queryParams = {
                     where: {
@@ -54,7 +58,7 @@ mp4Controllers.controller('UserListController', ['$scope', '$q', 'Users', 'Tasks
                 var premises = [];
                 for (var i = 0; i < pendingTasks.length; i++) {
                     pendingTasks[i].assignedUserName = 'unassigned';
-                    pendingTasks[i].assignedUser = undefined;
+                    pendingTasks[i].assignedUser = "";
                     premises.push(Tasks.update(pendingTasks[i]._id, pendingTasks[i]));
                 }
                 return $q.all(premises);

@@ -8,9 +8,9 @@
     <div class="row" ng-repeat="user in users">
         <h4 class="columns small-3"><a href="#/users/{{user._id}}">{{user.name}}</a></h4>
         <h4 class="columns small-3">{{user.email}}</h4>
-        <h4 class="columns small-3">{{user._id}}</h4>
+        <!--<h4 class="columns small-3">{{user._id}}</h4>-->
         <div class="columns small-4">
-            <button type="button" ng-click="deleteUser(user._id)" class="alert button">Delete</button>
+            <button type="button" ng-click="deleteUser($index)" class="alert button">Delete</button>
         </div>
     </div>
     <div class="error">
