@@ -9,7 +9,7 @@ mp4Controllers.controller('SettingsController', ['$scope', '$window', 'UserStore
         console.log($scope.url);
         $window.sessionStorage.baseurl = $scope.url;
         $scope.displayText = "URL set";
-        UserStore.update();
+        //UserStore.update();
         //TaskStore.update();
     };
 }]);
