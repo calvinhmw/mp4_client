@@ -94,21 +94,23 @@ mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Us
         });
     };
 
-    $scope.markTaskComplete = function (taskId) {
+    $scope.markTaskComplete = function (taskIdx) {
 
         // without re-querying the task, use the pending task array we just created
-        var taskToUpdate = $scope.pendingTasks.filter(function (task) {
-            return task._id == taskId;
-        })[0];
+        //var taskToUpdate = $scope.pendingTasks.filter(function (task) {
+        //    return task._id == taskId;
+        //})[0];
+        //taskToUpdate.completed = true;
+        var taskToUpdate = $scope.pendingTasks[taskIdx];
         taskToUpdate.completed = true;
+        $scope.pendingTasks.splice(taskIdx,1);
+        console.log(taskToUpdate);
 
-        //console.log(taskToUpdate);
-
-        Tasks.update(taskId, taskToUpdate).then(function (response) {
+        Tasks.update(taskToUpdate._id, taskToUpdate).then(function (response) {
             //console.log(response);
             //delete the task from user(local)'s pending task array
             var userToUpdate = $scope.user;
-            var idxToRemove = userToUpdate.pendingTasks.indexOf(taskId);
+            var idxToRemove = userToUpdate.pendingTasks.indexOf(taskToUpdate._id);
             if (idxToRemove > -1) {
                 userToUpdate.pendingTasks.splice(idxToRemove, 1);
             }
@@ -116,10 +118,9 @@ mp4Controllers.controller('UserDetailController', ['$scope', '$routeParams', 'Us
             return Users.update($scope.userId, userToUpdate);
         }).then(function (response) {
                 //console.log(response);
-                updateUserDetail();
             }, function (response) {
                 //console.log(response);
-                //$scope.errorMsg = response.data.message;
+                $scope.errorMsg = response.data.message;
             }
         );
     };
@@ -256,11 +257,12 @@ mp4Controllers.controller('TaskListController', ['$scope', '$q', 'Tasks', 'Users
         $scope.queryParams.sort[$scope.sortBy] = $scope.ascendingOrder ? 1 : -1;
     };
 
-    $scope.deleteTask = function (taskId) {
+    $scope.deleteTask = function (taskIdx) {
         // first find the task
-        var task = $scope.tasks.filter(function (t) {
-            return taskId == t._id;
-        })[0];
+        //var task = $scope.tasks.filter(function (t) {
+        //    return taskId == t._id;
+        //})[0];
+        var task = $scope.tasks[taskIdx];
         if (task) {
             // first delete the task
             Tasks.delete(task._id).then(function (response) {
@@ -273,9 +275,9 @@ mp4Controllers.controller('TaskListController', ['$scope', '$q', 'Tasks', 'Users
                 console.log(response.data);
                 //remove the pending task from the user's pending task lists
                 var user = response.data.data;
-                var taskIdx = user.pendingTasks.indexOf(task._id);
-                if (taskIdx != -1) {
-                    user.pendingTasks.splice(taskIdx, 1);
+                var idx = user.pendingTasks.indexOf(task._id);
+                if (idx != -1) {
+                    user.pendingTasks.splice(idx, 1);
                     return Users.update(user._id, user);
                 }
                 return response;
@@ -289,9 +291,7 @@ mp4Controllers.controller('TaskListController', ['$scope', '$q', 'Tasks', 'Users
                 //$scope.errorMsg = response.data.message;
             });
         }
-
     };
-
     $scope.$watch('queryParams', updateTaskList, true);
 
 }]);

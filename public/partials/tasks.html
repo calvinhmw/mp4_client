@@ -5,7 +5,7 @@
 
 <div>
 
-    <h1>total page: {{count}}</h1>
+    <h1>total tasks: {{count}}</h1>
     <h1>current page: {{page}}</h1>
     <h1>No of skipped items: {{page*queryParams.limit}}</h1>
     <h1>{{times}}</h1>
@@ -73,7 +73,7 @@
         </div>
 
         <div class="columns small-1">
-            <button type="button" ng-click="deleteTask(task._id)" class="alert button">Delete</button>
+            <button type="button" ng-click="deleteTask($index)" class="alert button">Delete</button>
         </div>
     </div>
 
