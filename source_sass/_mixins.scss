@@ -1,1 +1,17 @@
 // Insert your mixins
+
+
+.nav-button{
+  -moz-transition: all 0.3s ease-out;
+  -webkit-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+}
+
+@mixin scale-element-on-hover($percentage) {
+  -webkit-transform: scale($percentage);
+  -moz-transform: scale($percentage);
+  -ms-transform: scale($percentage);
+  -o-transform: scale($percentage);
+  transform: scale($percentage);
+}

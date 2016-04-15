@@ -1,19 +1,25 @@
-<div>
-    <h2>Users</h2>
-    <span>a list of users</span>
+<div class="page-title row align-center align-middle">
+    <div class="columns small-5">
+        <h2>Users</h2>
+        <span>a list of users</span>
+    </div>
+    <div class="columns small-5">
+        <a href="#/adduser" class="large button">Add a User</a>
+    </div>
 </div>
 
+<div class="random-space"></div>
+
 <div>
-    <a href="#/adduser" class="button">Add</a>
-    <div class="row" ng-repeat="user in users">
-        <h4 class="columns small-3"><a href="#/users/{{user._id}}">{{user.name}}</a></h4>
-        <h4 class="columns small-3">{{user.email}}</h4>
-        <!--<h4 class="columns small-3">{{user._id}}</h4>-->
+    <div class="content-container row align-center align-middle" ng-repeat="user in users">
+        <h4 class="columns small-4"><a href="#/users/{{user._id}}">{{user.name}}</a></h4>
+        <h4 class="columns small-4">{{user.email}}</h4>
         <div class="columns small-4">
             <button type="button" ng-click="deleteUser($index)" class="alert button">Delete</button>
         </div>
     </div>
     <div class="error">
-        <h3 class="error">{{errorCode}} : {{errorText}}</h3>
+        <h3 class="error-msg">{{errorCode}} {{errorText}}</h3>
+        <h3 class="error-msg">{{errorMsg}}</h3>
     </div>
 </div>

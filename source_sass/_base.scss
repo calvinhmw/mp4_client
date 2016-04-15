@@ -1,4 +1,7 @@
 // Add any custom Sass & CSS here
+@import url('http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+
 .required-field {
   color: red;
 }
@@ -8,10 +11,101 @@
   max-width: 100%;
 }
 
+#view-container{
+  position: relative;
+}
+
 
 .row.medium-width {
   width: 60%;
   max-width: 60%;
 }
+
+h1, h2, h3, h3, h4, h5, h6, p, li , a , span{
+  font-family: $font-secondary;
+}
+
+body {
+  background-color: antiquewhite;
+  //position: relative;
+}
+
+
+#top-bar-nav {
+  li {
+    a{
+      margin-right: 2em;
+      color: cornflowerblue;
+      font-size: 1.5em;
+    }
+    a:hover {
+      color: darkorange;
+      @include scale-element-on-hover(1.2);
+    }
+  }
+}
+
+.section-header {
+  position: relative;
+  overflow: hidden;
+  //border: 2px solid black;
+}
+
+
+.space {
+  height: 6em;
+}
+#footer-home {
+  border-top: 3px solid white;
+  //background-color: aliceblue;
+  bottom: 0;
+  position: relative;
+  padding: 2em;
+  #footer-content {
+    font-family: $font-secondary;
+    h4 {
+      text-transform: uppercase;
+      text-align: center;
+    }
+  }
+}
+
+.view-container{
+}
+
+#nav-bar {
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-left: 2em;
+  padding-right: 2em;
+}
+
+
+#setting-page {
+
+}
+
+.setting-space {
+  height: 100px;
+}
+
+.random-space {
+  height: 60px;
+}
+
+.content-container {
+  margin-bottom: 1em;
+  border-bottom: 2px solid white;
+}
+
+.success-msg {
+  color: blue;
+}
+
+.error-msg {
+  color: red;
+}
+
+
 
 

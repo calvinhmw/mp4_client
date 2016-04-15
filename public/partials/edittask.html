@@ -4,8 +4,8 @@
         <div class="columns small-4">
             <label>Name <span class="required-field">*</span>
                 <input type="text" name="name" ng-model="task.name" required>
-                <div ng-show="edittask.$submitted || edittask.name.$touched">
-                    <span ng-show="edittask.name.$error.required">A task name is required!</span>
+                <div class="error-msg" ng-show="edittask.$submitted || edittask.name.$touched">
+                    <span class="error-msg" ng-show="edittask.name.$error.required">A task name is required!</span>
                 </div>
             </label>
         </div>
@@ -25,8 +25,8 @@
             <label>Deadline<span class="required-field">*</span>
                 <datepicker>
                     <input name="deadline" ng-model="task.deadline" type="text" required/>
-                    <div ng-show="edittask.$submitted || edittask.deadline.$touched">
-                        <span ng-show="edittask.deadline.$error.required">Enter a valid date!</span>
+                    <div class="error-msg" ng-show="edittask.$submitted || edittask.deadline.$touched">
+                        <span class="error-msg" ng-show="edittask.deadline.$error.required">Enter a valid date!</span>
                     </div>
                 </datepicker>
             </label>
@@ -72,5 +72,5 @@
 <!--Task:<br>{{task}}-->
 
 <!--<p>{{response}}</p>-->
-<h1>{{successMsg}}</h1>
-<h1>{{errorMsg}}</h1>
+<h1 class="success-msg">{{successMsg}}</h1>
+<h1 class="error-msg">{{errorMsg}}</h1>
