@@ -318,23 +318,14 @@ mp4Controllers.controller('EditTaskController', ['$scope', '$q', '$routeParams',
         })[0];
         // the following deep copy does not actually copy the pendingTasks array!
         // previousUser and selectedUser shared the same pendingTasks memory !
-        $scope.previousUser = $scope.selectedUser ? Object.assign({}, $scope.selectedUser) : undefined;
+        //$scope.previousUser = $scope.selectedUser ? Object.assign({}, $scope.selectedUser) : undefined;
+
+        $scope.previousUser = $scope.selectedUser;
+
     }, function (response) {
         console.log(response);
         $scope.errorMsg = response.data.message;
     });
-    //
-    //Users.get().then(function (response) {
-    //    $scope.users = response.data.data;
-    //    $scope.selectedUser = $scope.users.filter(function (user) {
-    //        return user._id == $scope.task.assignedUser;
-    //    })[0];
-    //    // the following deep copy does not actually copy the pendingTasks array!
-    //    // previousUser and selectedUser shared the same pendingTasks memory !
-    //    $scope.previousUser = Object.assign({}, $scope.selectedUser);
-    //}, function (response) {
-    //    $scope.errorMsg = response.data.message;
-    //});
 
     $scope.editTask = function (form) {
         if (form && form.$valid) {
@@ -345,43 +336,48 @@ mp4Controllers.controller('EditTaskController', ['$scope', '$q', '$routeParams',
                 //task edited, now need to update user's pending tasks array
                 $scope.successMsg = "Task " + $scope.task.name + " edited";
 
-                if (!$scope.task.assignedUser) {
+                if (!$scope.task.assignedUser || !$scope.selectedUser) {
                     // break premise chain here
                     return $q.reject({data: {message: 'task is unassigned'}});
+                } else if ($scope.selectedUser == $scope.previousUser) {
+                    // user does not change
+                    //console.log("user not change");
+                    var taskIdx = $scope.selectedUser.pendingTasks.indexOf($scope.task._id);
+                    if ($scope.task.completed && taskIdx != -1) {
+                        $scope.selectedUser.pendingTasks.splice(taskIdx, 1);
+                    } else if (!$scope.task.completed && taskIdx == -1) {
+                        $scope.selectedUser.pendingTasks.push($scope.task._id);
+                    }
                 } else {
-                    // delete the task from previous user's pending task array
+                    // user changes
+                    // first delete task from previous user
                     if ($scope.previousUser) {
-                        var taskIdx = $scope.previousUser.pendingTasks.indexOf($scope.task._id);
+                        taskIdx = $scope.previousUser.pendingTasks.indexOf($scope.task._id);
                         if (taskIdx != -1) {
                             $scope.previousUser.pendingTasks.splice(taskIdx, 1);
-                            //console.log($scope.previousUser.pendingTasks);
                         } else {
                             console.log($scope.task._id + " does not exist in " + $scope.previousUser);
                         }
                     }
-                    if (!$scope.task.completed) {
-                        taskIdx = $scope.selectedUser.pendingTasks.indexOf($scope.task._id);
-                        if (taskIdx == -1) {
-                            $scope.selectedUser.pendingTasks.push($scope.task._id);
-                        }
-                        //console.log($scope.previousUser.pendingTasks);
-
-                    } else {
-                        taskIdx = $scope.selectedUser.pendingTasks.indexOf($scope.task._id);
-                        if (taskIdx != -1) {
-                            $scope.selectedUser.pendingTasks.splice(taskIdx, 1);
-                        }
+                    //next add the task to new user if needed:
+                    taskIdx = $scope.selectedUser.pendingTasks.indexOf($scope.task._id);
+                    if ($scope.task.completed && taskIdx != -1) {
+                        $scope.selectedUser.pendingTasks.splice(taskIdx, 1);
+                    } else if (!$scope.task.completed && taskIdx == -1) {
+                        $scope.selectedUser.pendingTasks.push($scope.task._id);
                     }
-                    //console.log($scope.previousUser.pendingTasks);
                 }
                 return Users.update($scope.selectedUser._id, $scope.selectedUser);
             }).then(function (response) {
-                if ($scope.previousUser && $scope.selectedUser && $scope.previousUser._id != $scope.selectedUser._id) {
+                console.log(response);
+                if ($scope.previousUser && $scope.previousUser != $scope.selectedUser) {
                     return Users.update($scope.previousUser._id, $scope.previousUser);
                 }
                 return response;
             }).then(function (response) {
+                console.log(response);
                 //$scope.previousUser = Object.assign({}, $scope.selectedUser);
+                $scope.previousUser = $scope.selectedUser;
                 console.log(response.data.message);
             }, function (response) {
                 console.log(response.data.message);
