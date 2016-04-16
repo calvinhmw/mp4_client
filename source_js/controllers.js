@@ -436,7 +436,7 @@ mp4Controllers.controller('AddTaskController', ['$scope', '$q', 'Tasks', 'Users'
                     return Users.getDetail(data.assignedUser);
                 } else {
                     // break premise chain here
-                    return $q.reject({data: {message: 'task is unassigned'}});
+                    return $q.reject({data: {message: ""}});
                 }
             }).then(function (response) {
                 var user = response.data.data;
